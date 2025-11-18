@@ -1,0 +1,6 @@
+.nav{position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,#fff,#f8fbff);border-bottom:1px solid rgba(15,25,40,0.03);backdrop-filter: blur(4px);}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;padding:12px 0}
+.brand{font-weight:700;color:var(--accent);text-decoration:none;font-size:1.2rem}
+.nav a{margin-left:14px;color:#0f1724;text-decoration:none}
+.nav nav{display:flex;align-items:center}
+.btn-ghost{padding:6px 10px;border-radius:8px}

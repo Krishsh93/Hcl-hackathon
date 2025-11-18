@@ -1,0 +1,61 @@
+.dashboard h2{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.card{padding:18px;text-align:center}
+.panel{background:var(--card);padding:18px;border-radius:12px;box-shadow:var(--shadow);margin-top:16px}
+.panel h3{margin-top:0}
+.appt{display:flex;justify-content:space-between;align-items:center;padding:14px;border-bottom:1px solid #f0f4fb}
+.appt:last-child{border-bottom:none}
+.appt-info{flex:1}
+.appt-info .spec{display:inline-block;margin-left:8px;padding:4px 8px;background:#e0f2fe;color:#0369a1;border-radius:6px;font-size:0.85rem}
+.appt-info .reason{margin-top:6px;color:#374151}
+.appt-info .notes{margin-top:4px;font-size:0.9rem}
+.appt-actions{display:flex;gap:8px;align-items:center}
+.btn-small{padding:6px 10px;border-radius:8px;border:none;background:var(--accent);color:white;cursor:pointer}
+.btn-small:hover{opacity:0.9}
+.btn-small.btn-light{background:transparent;border:1px solid #e6eef8;color:var(--accent)}
+.status{display:inline-block;padding:6px 10px;border-radius:999px;background:#f1f7ff;color:var(--accent);font-size:0.9rem}
+.status-scheduled{background:#dbeafe;color:#1e40af}
+.status-completed{background:#d1fae5;color:#065f46}
+.status-cancelled{background:#fee2e2;color:#991b1b}
+.create-appt-form{background:var(--card);padding:20px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px}
+.create-appt-form h3{margin-top:0}
+.create-appt-form input,.create-appt-form select,.create-appt-form textarea{display:block;width:100%;padding:10px 12px;margin:8px 0;border-radius:8px;border:1px solid #e6eef8}
+.create-appt-form button{margin-top:8px}
+.add-record-form{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:24px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px}
+.add-record-form h3{margin-top:0;color:white}
+.record-type-selector{display:flex;gap:10px;margin:12px 0}
+.record-type-selector label{flex:1;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(255,255,255,0.15);border-radius:8px;cursor:pointer;transition:all 0.2s}
+.record-type-selector label.active{background:rgba(255,255,255,0.3);transform:scale(1.05)}
+.record-type-selector input[type="radio"]{display:none}
+.record-type-selector span{font-size:1.1rem}
+.form-row{display:flex;gap:8px;align-items:center;margin:8px 0}
+.form-row input{flex:1;margin:0}
+.unit-label{background:rgba(255,255,255,0.2);padding:10px 14px;border-radius:8px;font-weight:600}
+.add-record-form input{background:rgba(255,255,255,0.9);border:none}
+.add-record-form .btn{background:white;color:#667eea;font-weight:600}
+.add-record-form .btn:hover{background:#f8f9fa}
+.msg.success{color:#10b981;background:#d1fae5}
+.stats-section h3{margin:16px 0 12px}
+.stat-card{position:relative;overflow:hidden}
+.stat-card.sleep{background:linear-gradient(135deg,#a78bfa,#818cf8)}
+.stat-card.water{background:linear-gradient(135deg,#38bdf8,#0ea5e9)}
+.stat-card.exercise{background:linear-gradient(135deg,#34d399,#10b981)}
+.stat-card{color:white}
+.stat-icon{font-size:2.5rem;margin-bottom:8px}
+.stat-label{font-size:0.9rem;opacity:0.9}
+.stat-value{font-size:1.8rem;font-weight:700;margin:6px 0}
+.stat-avg{font-size:0.85rem;opacity:0.8}
+.records-list{display:grid;gap:10px;margin-top:12px}
+.record-item{background:#f9fafb;padding:14px;border-radius:8px;border-left:4px solid var(--accent)}
+.record-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.record-icon{font-size:1.3rem}
+.record-type{text-transform:capitalize;color:#374151}
+.record-date{margin-left:auto;font-size:0.85rem;color:var(--muted)}
+.record-value{font-size:1.2rem;font-weight:600;color:#111}
+.record-notes{margin-top:6px;font-size:0.9rem;color:var(--muted)}
+.doctor-stat{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white}
+.today-appts-grid{display:grid;gap:12px;margin-top:12px}
+.today-appt-card{background:#f9fafb;padding:14px;border-radius:8px;border-left:4px solid #0ea5e9;display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center}
+.appt-patient{font-weight:600;color:#111}
+.appt-time{color:var(--accent);font-weight:500}
+.appt-reason{color:var(--muted);font-size:0.9rem}
