@@ -52,30 +52,48 @@ The system implements a **unified backend architecture** with role-based access 
 ## **High-Level Design (HLD)**
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                      FRONTEND                            │
-│                                                          │
-│         Patient Portal      |     Provider Portal       │
-│         (React + Vite)      |     (React + Vite)        │
-└─────────────────────┬────────────────────────────────────┘
-                      │
-                      │ HTTPS/REST API
-                      ▼
-┌──────────────────────────────────────────────────────────┐
-│                  BACKEND (Node.js)                       │
-│                                                          │
-│  ┌────────────┐  ┌────────────┐  ┌──────────────────┐  │
-│  │    Auth    │  │            │  │   Controllers    │  │
-│  │   (JWT)    │  │ Middleware │  │   & Services     │  │
-│  └────────────┘  └────────────┘  └──────────────────┘  │
-└─────────────────────┬────────────────────────────────────┘
-                      │
-                      ▼
-┌──────────────────────────────────────────────────────────┐
-│                DATABASE (MongoDB Atlas)                  │
-│                                                          │
-│  Users | Goals | Reminders | Notifications | Mappings   │
-└──────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                   HEALTHCARE WELLNESS SYSTEM                        │
+│                         (Landing Page)                              │
+└────────────────┬────────────────────────────────────┬───────────────┘
+                 │                                    │
+    ┌────────────▼──────────┐          ┌─────────────▼────────────┐
+    │   PROVIDER LOGIN      │          │    PATIENT LOGIN         │
+    └────────────┬──────────┘          └─────────────┬────────────┘
+                 │                                    │
+    ┌────────────▼──────────┐          ┌─────────────▼────────────┐
+    │  PROVIDER DASHBOARD   │          │   PATIENT DASHBOARD      │
+    │                       │          │                          │
+    │  • View Patients      │          │  • View Doctors          │
+    │  • Appointments       │          │  • Prescriptions         │
+    │  • Patient Reports    │          │  • Health Reports        │
+    │  • Settings           │          │  • Chat with Doctor      │
+    │                       │          │  • Book Appointment      │
+    └────────────┬──────────┘          └─────────────┬────────────┘
+                 │                                    │
+                 │              ┌─────────────────────┤
+                 │              │                     │
+    ┌────────────▼──────────────▼─────────────────────▼────────────┐
+    │                  SHARED SERVICES                              │
+    │                                                               │
+    │                                                               │
+    │  • Appointment Booking   • Wellness Goal Tracking            │
+    │  • Notifications                                              │
+    │                                                               │
+    └────────────────────────────┬──────────────────────────────────┘
+                                 │
+                    ┌────────────▼─────────────┐
+                    │   MONGODB ATLAS          │
+                    │                          │
+                    │  Collections:            │
+                    │  • Users (Login Data)    │
+                    │  • Goals                 │
+                    │  • Reminders             │
+                    │  • Appointments          │
+                    │  • Notifications         │
+                    │                          │
+                    │  • Provider-Patient Map  │
+                    └──────────────────────────┘
 ```
 
 ---
