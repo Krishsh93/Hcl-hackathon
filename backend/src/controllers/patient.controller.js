@@ -1,5 +1,6 @@
 const PatientRecord = require('../models/PatientRecord');
 const Notification = require('../models/Notification');
+const Appointment = require('../models/Appointment');
 
 // Get patient records
 const getRecords = async (req, res) => {
@@ -112,10 +113,31 @@ const getDashboard = async (req, res) => {
       }
     });
 
+    // Get upcoming appointments
+    const upcomingAppointments = await Appointment.find({
+      patientId: userId,
+      date: { $gte: today },
+      status: { $in: ['scheduled', 'pending'] }
+    })
+      .populate('doctorId', 'firstName lastName specialization')
+      .sort({ date: 1, time: 1 })
+      .limit(5);
+
+    // Get recent appointments
+    const recentAppointments = await Appointment.find({
+      patientId: userId,
+      date: { $lt: today }
+    })
+      .populate('doctorId', 'firstName lastName specialization')
+      .sort({ date: -1 })
+      .limit(3);
+
     res.json({
       success: true,
       stats,
-      recentRecords: weekRecords.slice(0, 10)
+      recentRecords: weekRecords.slice(0, 10),
+      upcomingAppointments,
+      recentAppointments
     });
   } catch (error) {
     console.error('Get dashboard error:', error);

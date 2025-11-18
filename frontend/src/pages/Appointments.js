@@ -52,6 +52,10 @@ function CreateAppointmentForm({ onCreated }) {
   const [notes, setNotes] = useState('');
   const [message, setMessage] = useState('');
 
+  // Get today's date for min attribute
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+
   useEffect(() => {
     // Fetch doctors list
     const fetchDoctors = async () => {
@@ -69,6 +73,30 @@ function CreateAppointmentForm({ onCreated }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate date and time are not in the past
+    if (!date || !time) {
+      setMessage('Please select both date and time');
+      return;
+    }
+
+    // Combine date and time into a single datetime
+    const appointmentDateTime = new Date(`${date}T${time}:00`);
+    const now = new Date();
+
+    // Check if appointment is in the past
+    if (appointmentDateTime.getTime() <= now.getTime()) {
+      setMessage('Cannot book appointments in the past. Please select a future date and time.');
+      return;
+    }
+
+    // Check minimum lead time (1 hour = 60 minutes)
+    const diffMinutes = (appointmentDateTime.getTime() - now.getTime()) / (1000 * 60);
+    if (diffMinutes < 60) {
+      setMessage('Appointments must be booked at least 1 hour in advance.');
+      return;
+    }
+
     try {
       await api.post('/v1/appointments', { doctorId, date, time, reason, notes });
       setMessage('Appointment created successfully!');
@@ -96,7 +124,7 @@ function CreateAppointmentForm({ onCreated }) {
             </option>
           ))}
         </select>
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={todayStr} required />
         <input type="time" value={time} onChange={(e) => setTime(e.target.value)} placeholder="Time" required />
         <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason for visit" required />
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional notes (optional)" rows="3" />

@@ -18,6 +18,19 @@ const getDashboard = async (req, res) => {
       date: { $gte: today, $lt: tomorrow }
     }).populate('patientId', 'firstName lastName');
 
+    // Get upcoming appointments (next 7 days)
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    const upcomingAppointments = await Appointment.find({
+      doctorId,
+      date: { $gte: today, $lte: nextWeek },
+      status: { $in: ['scheduled', 'pending'] }
+    })
+      .populate('patientId', 'firstName lastName')
+      .sort({ date: 1, time: 1 })
+      .limit(10);
+
     // Get all appointments count by status
     const appointmentStats = await Appointment.aggregate([
       { $match: { doctorId } },
@@ -32,12 +45,14 @@ const getDashboard = async (req, res) => {
       stats: {
         totalPatients: uniquePatients.length,
         todayAppointments: todayAppointments.length,
+        upcomingAppointments: upcomingAppointments.length,
         appointmentsByStatus: appointmentStats.reduce((acc, stat) => {
           acc[stat._id] = stat.count;
           return acc;
         }, {})
       },
-      todayAppointments
+      todayAppointments,
+      upcomingAppointments
     });
   } catch (error) {
     console.error('Get doctor dashboard error:', error);

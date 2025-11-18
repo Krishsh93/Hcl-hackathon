@@ -41,6 +41,27 @@ const createAppointment = async (req, res) => {
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
+    // Validate appointment date and time
+    const appointmentDateTime = new Date(`${date}T${time}:00`);
+    
+    // Check if date is valid
+    if (isNaN(appointmentDateTime.getTime())) {
+      return res.status(400).json({ message: 'Invalid date or time format' });
+    }
+
+    const now = new Date();
+    
+    // Check if appointment is in the past
+    if (appointmentDateTime.getTime() <= now.getTime()) {
+      return res.status(400).json({ message: 'Cannot book appointments in the past' });
+    }
+
+    // Check minimum lead time (1 hour = 60 minutes)
+    const diffMinutes = (appointmentDateTime.getTime() - now.getTime()) / (1000 * 60);
+    if (diffMinutes < 60) {
+      return res.status(400).json({ message: 'Appointments must be booked at least 1 hour in advance' });
+    }
+
     // Verify doctor exists
     const doctor = await User.findOne({ _id: doctorId, role: 'doctor' });
     if (!doctor) {

@@ -28,13 +28,53 @@ function AddRecordForm({ onAdded }) {
   const [message, setMessage] = useState('');
 
   const units = { sleep: 'hours', water: 'glasses', exercise: 'minutes' };
+  
+  // Define reasonable limits for each type
+  const limits = {
+    sleep: { min: 0, max: 24, name: 'Sleep' },
+    water: { min: 0, max: 30, name: 'Water' },
+    exercise: { min: 0, max: 1440, name: 'Exercise' } // max 24 hours in minutes
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate value is provided
+    if (!value || value === '') {
+      setMessage('Please enter a value');
+      return;
+    }
+
+    const numValue = Number(value);
+
+    // Check if value is a valid number
+    if (isNaN(numValue)) {
+      setMessage('Please enter a valid number');
+      return;
+    }
+
+    // Check if value is within reasonable limits
+    const limit = limits[type];
+    if (numValue < limit.min) {
+      setMessage(`${limit.name} cannot be negative`);
+      return;
+    }
+
+    if (numValue > limit.max) {
+      setMessage(`${limit.name} cannot exceed ${limit.max} ${units[type]}`);
+      return;
+    }
+
+    // Check for decimal precision (max 1 decimal place)
+    if (numValue % 0.1 !== 0 && numValue % 1 !== 0) {
+      setMessage('Please use at most 1 decimal place');
+      return;
+    }
+
     try {
       await api.post('/v1/patient/records', { 
         type, 
-        value: Number(value), 
+        value: numValue, 
         unit: units[type], 
         notes 
       });
@@ -75,9 +115,15 @@ function AddRecordForm({ onAdded }) {
             placeholder={`Enter ${units[type]}`}
             step="0.1"
             min="0"
+            max={limits[type].max}
             required 
           />
           <span className="unit-label">{units[type]}</span>
+        </div>
+        <div className="hint-text">
+          {type === 'sleep' && <small>Valid range: 0-24 hours</small>}
+          {type === 'water' && <small>Valid range: 0-30 glasses</small>}
+          {type === 'exercise' && <small>Valid range: 0-1440 minutes (24 hours)</small>}
         </div>
         <input 
           value={notes} 
@@ -94,6 +140,8 @@ function AddRecordForm({ onAdded }) {
 export default function PatientDashboard() {
   const [stats, setStats] = useState(null);
   const [recentRecords, setRecentRecords] = useState([]);
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+  const [recentAppointments, setRecentAppointments] = useState([]);
 
   const loadDashboard = async () => {
     try {
@@ -101,6 +149,10 @@ export default function PatientDashboard() {
       setStats(data?.stats || null);
       const records = data?.recentRecords || data?.records || [];
       setRecentRecords(Array.isArray(records) ? records : []);
+      const upcoming = data?.upcomingAppointments || [];
+      setUpcomingAppointments(Array.isArray(upcoming) ? upcoming : []);
+      const recent = data?.recentAppointments || [];
+      setRecentAppointments(Array.isArray(recent) ? recent : []);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
@@ -140,6 +192,32 @@ export default function PatientDashboard() {
           </div>
         </div>
       )}
+
+      <section className="panel">
+        <h3>Upcoming Appointments</h3>
+        {upcomingAppointments.length === 0 && (
+          <p className="muted">No upcoming appointments.</p>
+        )}
+        {upcomingAppointments.map((appt) => (
+          <div key={appt._id} className="appt-card">
+            <div className="appt-header">
+              <strong>
+                Dr. {appt.doctorId?.firstName} {appt.doctorId?.lastName}
+              </strong>
+              {appt.doctorId?.specialization && (
+                <span className="spec">{appt.doctorId.specialization}</span>
+              )}
+            </div>
+            <div className="appt-details">
+              <div className="appt-date">
+                📅 {new Date(appt.date).toLocaleDateString()} at {appt.time}
+              </div>
+              <div className="appt-reason">{appt.reason}</div>
+              <span className={`status status-${appt.status}`}>{appt.status}</span>
+            </div>
+          </div>
+        ))}
+      </section>
 
       <section className="panel">
         <h3>Recent Activity</h3>

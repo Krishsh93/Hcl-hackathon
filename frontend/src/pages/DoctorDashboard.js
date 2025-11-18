@@ -20,6 +20,7 @@ function AppointmentCard({ appt }) {
 export default function DoctorDashboard() {
   const [stats, setStats] = useState(null);
   const [todayAppointments, setTodayAppointments] = useState([]);
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -28,6 +29,8 @@ export default function DoctorDashboard() {
         setStats(data?.stats || null);
         const appts = data?.todayAppointments || [];
         setTodayAppointments(Array.isArray(appts) ? appts : []);
+        const upcoming = data?.upcomingAppointments || [];
+        setUpcomingAppointments(Array.isArray(upcoming) ? upcoming : []);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error(err);
@@ -65,6 +68,27 @@ export default function DoctorDashboard() {
         <div className="today-appts-grid">
           {todayAppointments.map((appt) => (
             <AppointmentCard key={appt._id} appt={appt} />
+          ))}
+        </div>
+      </section>
+      <section className="panel">
+        <h3>Upcoming Appointments (Next 7 Days)</h3>
+        {upcomingAppointments.length === 0 && (
+          <p className="muted">No upcoming appointments.</p>
+        )}
+        <div className="today-appts-grid">
+          {upcomingAppointments.map((appt) => (
+            <div key={appt._id} className="today-appt-card">
+              <div className="appt-patient">
+                {appt.patientId ? `${appt.patientId.firstName} ${appt.patientId.lastName}` : 'Patient'}
+              </div>
+              <div className="appt-date">
+                {new Date(appt.date).toLocaleDateString()}
+              </div>
+              <div className="appt-time">{appt.time}</div>
+              <div className="appt-reason">{appt.reason}</div>
+              <span className={`status status-${appt.status}`}>{appt.status}</span>
+            </div>
           ))}
         </div>
       </section>

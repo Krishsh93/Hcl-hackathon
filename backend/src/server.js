@@ -21,6 +21,5 @@ process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
 server.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`Server listening on port ${PORT} (${NODE_ENV})`);
 });
