@@ -1,6 +1,10 @@
 const http = require('http');
 const { PORT, NODE_ENV } = require('./config/env');
 const createApp = require('./load/express');
+const connectDB = require('./config/database');
+
+// Connect to database
+connectDB();
 
 const app = createApp();
 const server = http.createServer(app);

@@ -67,7 +67,7 @@ The system implements a **unified backend architecture** with role-based access 
     │  • View Patients      │          │  • View Doctors          │
     │  • Appointments       │          │  • Prescriptions         │
     │  • Patient Reports    │          │  • Health Reports        │
-    │  • Settings           │          │  • Chat with Doctor      │
+    │  • Settings           │          │      │
     │                       │          │  • Book Appointment      │
     └────────────┬──────────┘          └─────────────┬────────────┘
                  │                                    │
