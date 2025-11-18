@@ -2,7 +2,7 @@
 
 ## **Overview**
 
-A comprehensive Healthcare Wellness & Preventive Care Portal built for hackathon that enables **patients** to track wellness goals and view preventive checkup reminders, while **providers** can monitor assigned patients and manage their preventive care plans.
+A comprehensive Healthcare Wellness & Preventive Care Portal that enables **patients** to track wellness goals and view preventive checkup reminders, while **providers** can monitor assigned patients and manage their preventive care plans.
 
 The system implements a **unified backend architecture** with role-based access control (RBAC) serving both patient and provider interfaces through a shared API layer.
 
@@ -12,14 +12,10 @@ The system implements a **unified backend architecture** with role-based access 
 
 - [Core Features](#core-features)
 - [High-Level Design (HLD)](#high-level-design-hld)
-- [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Workflow](#workflow)
 - [API Reference](#api-reference)
 - [Database Schema](#database-schema)
-- [Setup & Installation](#setup--installation)
-- [Deployment](#deployment)
-- [MVP Deliverables](#mvp-deliverables)
 
 ---
 
@@ -55,70 +51,32 @@ The system implements a **unified backend architecture** with role-based access 
 
 ## **High-Level Design (HLD)**
 
-### **System Components**
-
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         CLIENT LAYER                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  ┌──────────────────────┐        ┌──────────────────────┐      │
-│  │   Patient Portal     │        │   Provider Portal    │      │
-│  │   (React + Tailwind) │        │   (React + Tailwind) │      │
-│  └──────────┬───────────┘        └──────────┬───────────┘      │
-│             │                               │                    │
-└─────────────┼───────────────────────────────┼────────────────────┘
-              │                               │
-              └───────────────┬───────────────┘
-                              │ HTTPS/REST
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY LAYER                           │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │           Express.js API Server (Node.js)                 │  │
-│  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────────┐  │  │
-│  │  │ Auth Layer  │  │ RBAC Layer   │  │ Route Handler   │  │  │
-│  │  │  (JWT)      │  │ (Middleware) │  │  (Controllers)  │  │  │
-│  │  └─────────────┘  └──────────────┘  └─────────────────┘  │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                   │
-└───────────────────────────────┬───────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    BUSINESS LOGIC LAYER                          │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│  ┌─────────────────┐  ┌──────────────────┐  ┌───────────────┐  │
-│  │  Goal Service   │  │ Reminder Service │  │ Health Score  │  │
-│  └─────────────────┘  └──────────────────┘  └───────────────┘  │
-│                                                                   │
-│  ┌─────────────────┐  ┌──────────────────┐  ┌───────────────┐  │
-│  │ Profile Service │  │  Notification    │  │   Provider    │  │
-│  │                 │  │    Service       │  │   Mapping     │  │
-│  └─────────────────┘  └──────────────────┘  └───────────────┘  │
-│                                                                   │
-└───────────────────────────────┬───────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                       DATA LAYER                                 │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
-│                      MongoDB Atlas                               │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐  │
-│  │  Users   │ │  Goals   │ │Reminders │ │  Notifications   │  │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────────────┘  │
-│                                                                   │
-│  ┌──────────────────────┐ ┌──────────────────────────────────┐  │
-│  │ Provider-Patient Map │ │        Audit Logs               │  │
-│  └──────────────────────┘ └──────────────────────────────────┘  │
-│                                                                   │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                      FRONTEND                            │
+│                                                          │
+│         Patient Portal      |     Provider Portal       │
+│         (React + Vite)      |     (React + Vite)        │
+└─────────────────────┬────────────────────────────────────┘
+                      │
+                      │ HTTPS/REST API
+                      ▼
+┌──────────────────────────────────────────────────────────┐
+│                  BACKEND (Node.js)                       │
+│                                                          │
+│  ┌────────────┐  ┌────────────┐  ┌──────────────────┐  │
+│  │    Auth    │  │            │  │   Controllers    │  │
+│  │   (JWT)    │  │ Middleware │  │   & Services     │  │
+│  └────────────┘  └────────────┘  └──────────────────┘  │
+└─────────────────────┬────────────────────────────────────┘
+                      │
+                      ▼
+┌──────────────────────────────────────────────────────────┐
+│                DATABASE (MongoDB Atlas)                  │
+│                                                          │
+│  Users | Goals | Reminders | Notifications | Mappings   │
+└──────────────────────────────────────────────────────────┘
 ```
-
 
 ---
 
@@ -194,60 +152,6 @@ The system implements a **unified backend architecture** with role-based access 
 └──────────────────┘
 ```
 
-### **Patient Goal Tracking Flow**
-
-```
-┌──────────────┐
-│   Patient    │
-└──────┬───────┘
-       │
-       │ 1. Log goal (steps: 10000)
-       ▼
-┌────────────────────┐
-│  Goal Form         │
-└──────┬─────────────┘
-       │
-       │ 2. POST /api/patient/goals
-       │    Headers: { Authorization: Bearer <token> }
-       ▼
-┌────────────────────────┐
-│  Auth Middleware       │
-│  • Verify JWT          │
-│  • Extract user        │
-└──────┬─────────────────┘
-       │
-       │ 3. Authenticated request
-       ▼
-┌────────────────────────┐
-│  RBAC Middleware       │
-│  • Check role=patient  │
-└──────┬─────────────────┘
-       │
-       │ 4. Authorized request
-       ▼
-┌────────────────────────┐
-│  Patient Controller    │
-│  • Validate input      │
-│  • Call Goal Service   │
-└──────┬─────────────────┘
-       │
-       │ 5. Create goal record
-       ▼
-┌────────────────────────┐
-│  Goal Service          │
-│  • Save to MongoDB     │
-│  • Calculate progress  │
-│  • Update health score │
-└──────┬─────────────────┘
-       │
-       │ 6. Return saved goal
-       ▼
-┌────────────────────────┐
-│  Frontend              │
-│  • Update UI           │
-│  • Show success toast  │
-└────────────────────────┘
-```
 
 ### **Provider Patient Monitoring Flow**
 
@@ -380,23 +284,6 @@ The system implements a **unified backend architecture** with role-based access 
 }
 ```
 
-### **Reminders Collection**
-
-```javascript
-{
-  _id: ObjectId,
-  patientId: ObjectId (ref: User),
-  providerId: ObjectId (ref: User),
-  title: String,
-  description: String,
-  type: String (enum: ['checkup', 'screening', 'vaccination']),
-  dueDate: Date,
-  status: String (enum: ['pending', 'completed', 'missed']),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
 ### **Notifications Collection**
 
 ```javascript
@@ -423,16 +310,6 @@ The system implements a **unified backend architecture** with role-based access 
   createdAt: Date
 }
 ```
-
-### **MongoDB Atlas**
-
-- Already cloud-hosted
-- Update `MONGO_URI` in production environment variables
-- Whitelist deployment server IPs
-
----
-
-
 
 ## **Team**
 
